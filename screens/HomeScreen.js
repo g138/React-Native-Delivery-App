@@ -1,5 +1,5 @@
 import { View, Text, Image, TextInput, ScrollView } from 'react-native';
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -10,15 +10,28 @@ import {
 } from 'react-native-heroicons/outline';
 import Categories from '../components/Categories';
 import FeaturedRow from '../components/FeaturedRow';
+import sanityClient from '../sanity';
 
 const HomeScreen = () => {
 	const navigation = useNavigation();
+	const [featuredCategories, setFeaturedCategories] = useState();
+
+	useEffect(() => {
+		sanityClient
+			.fetch(
+				`*[_type == "featured"]{ ... , resturants[] -> { ... , dishes[] -> ,}}`
+			)
+			.then((data) => setFeaturedCategories(data))
+			.catch((err) => console.log(err));
+	}, []);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerShown: false,
 		});
 	}, []);
+
+	console.log(featuredCategories);
 
 	return (
 		<SafeAreaView className="bg-white">
