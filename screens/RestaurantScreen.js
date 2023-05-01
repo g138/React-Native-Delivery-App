@@ -10,11 +10,15 @@ import {
 } from 'react-native-heroicons/solid';
 import BasketIcon from '../components/BasketIcon';
 import DishRow from '../components/DishRow';
+import { setRestaurant } from '../features/restaurantSlice';
+import { useDispatch } from 'react-redux';
 
 import { urlFor } from '../sanity';
 
 const RestaurantScreen = () => {
 	const navigation = useNavigation();
+	const dispatch = useDispatch();
+
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerShown: false,
@@ -35,6 +39,23 @@ const RestaurantScreen = () => {
 			lat,
 		},
 	} = useRoute();
+
+	useEffect(() => {
+		dispatch(
+			setRestaurant({
+				id,
+				imgUrl,
+				title,
+				rating,
+				genre,
+				address,
+				short_description,
+				dishes,
+				long,
+				lat,
+			})
+		);
+	}, []);
 
 	return (
 		<>
