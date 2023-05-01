@@ -50,7 +50,7 @@ const FeaturedRow = ({ id, title, description }) => {
 						imgUrl={resturant.image.asset._ref}
 						title={resturant.name}
 						short_description={resturant.short_description}
-						reating={resturant.rating}
+						rating={resturant.rating}
 						address={resturant.address}
 						genre={resturant.type.name}
 						dishes={resturant.dishes}
