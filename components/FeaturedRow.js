@@ -1,9 +1,33 @@
 import { View, Text, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRightIcon } from 'react-native-heroicons/outline';
 import ResturantCard from './ResturantCard';
+import sanityClient from '../sanity';
 
-const FeaturedRow = ({ title, description, id }) => {
+const FeaturedRow = ({ id, title, description }) => {
+	const [resturants, setResturants] = useState([]);
+
+	useEffect(() => {
+		sanityClient
+			.fetch(
+				`
+					*[_type == "featured" && _id == $id] {
+					...,
+					restaurants[]->{
+						...,
+						dishes[] ->,
+						type-> {
+						name
+						}
+						},
+						}[0]
+					`,
+				{ id }
+			)
+			.then((data) => setResturants(data.restaurants))
+			.catch((err) => console.log(err));
+	}, [id]);
+
 	return (
 		<View>
 			<View className="flex-row items-center justify-between mt-4 px-4">
@@ -19,44 +43,21 @@ const FeaturedRow = ({ title, description, id }) => {
 				showsHorizontalScrollIndicator={false}
 				className="pt-4"
 			>
-				<ResturantCard
-					id={12345}
-					imgUrl="https://links.papareact.com/gn7"
-					title="Yo Sushi!"
-					rating={4.5}
-					genre="Japenese"
-					address="123 Main St."
-					short_description="This is a test description"
-					dishes={[]}
-					long={20}
-					lat={0}
-				/>
-
-				<ResturantCard
-					id={12345}
-					imgUrl="https://links.papareact.com/gn7"
-					title="Yo Sushi!"
-					rating={4.5}
-					genre="Japenese"
-					address="123 Main St."
-					short_description="This is a test description"
-					dishes={[]}
-					long={20}
-					lat={0}
-				/>
-
-				<ResturantCard
-					id={12345}
-					imgUrl="https://links.papareact.com/gn7"
-					title="Yo Sushi!"
-					rating={4.5}
-					genre="Japenese"
-					address="123 Main St."
-					short_description="This is a test description"
-					dishes={[]}
-					long={20}
-					lat={0}
-				/>
+				{resturants?.map((resturant) => (
+					<ResturantCard
+						key={resturant._id}
+						id={resturant._id}
+						imgUrl={resturant.image.asset._ref}
+						title={resturant.name}
+						short_description={resturant.short_description}
+						reating={resturant.rating}
+						address={resturant.address}
+						genre={resturant.type.name}
+						dishes={resturant.dishes}
+						long={resturant.long}
+						lat={resturant.lat}
+					/>
+				))}
 			</ScrollView>
 		</View>
 	);

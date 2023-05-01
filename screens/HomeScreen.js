@@ -31,7 +31,6 @@ const HomeScreen = () => {
 		});
 	}, []);
 
-	console.log(featuredCategories);
 
 	return (
 		<SafeAreaView className="bg-white">
@@ -71,21 +70,15 @@ const HomeScreen = () => {
 				contentContainerStyle={{ paddingBottom: 100 }}
 			>
 				<Categories />
-				<FeaturedRow
-					title="Featured"
-					description="Paid placements from our partners"
-					id="featured"
-				/>
-				<FeaturedRow
-					title="Tasty Discounts"
-					description="Everyone enjoying these juicy discounts!"
-					id="discounts"
-				/>
-				<FeaturedRow
-					title="Offers near you!!"
-					description="Why not support you local resturant tonight!"
-					id="offers"
-				/>
+
+				{featuredCategories?.map((category) => (
+					<FeaturedRow
+						key={category._id}
+						id={category._id}
+						title={category.name}
+						description={category.short_description}
+					/>
+				))}
 			</ScrollView>
 		</SafeAreaView>
 	);
